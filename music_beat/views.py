@@ -4,7 +4,43 @@ from django.contrib.auth.models import User
 from django.shortcuts import redirect
 from django.contrib.auth import authenticate, login as auth_login, logout
 from django.db.models import Case, When
+import requests
+from bs4 import BeautifulSoup
 
+
+GENIUS_API_KEY = "n23ewu6_IQyMVBqkGp00FdTH0D-BpKnzjNo_a7Vl2gMFFM1_2kCQpm6NZem92Ep7"
+
+def get_lyrics(song_name, artist):
+    if not GENIUS_API_KEY:
+        return "Genius API key is missing."
+
+    headers = {"Authorization": f"Bearer {GENIUS_API_KEY}"}
+    search_url = "https://api.genius.com/search"
+    params = {"q": f"{song_name} {artist}"}
+
+    response = requests.get(search_url, headers=headers, params=params)
+
+    if response.status_code == 200:
+        json_data = response.json()
+        hits = json_data.get("response", {}).get("hits", [])
+        
+        if hits:
+            song_url = hits[0]["result"]["url"]
+            return scrape_lyrics(song_url)
+        return "Lyrics not found."
+    else:
+        return f"Error fetching lyrics. Status: {response.status_code}"
+
+def scrape_lyrics(url):
+    response = requests.get(url)
+    if response.status_code == 200:
+        soup = BeautifulSoup(response.text, "html.parser")
+        lyrics_divs = soup.find_all("div", class_="Lyrics__Container-sc-1ynbvzw-6")
+
+        if lyrics_divs:
+            return "\n".join([div.get_text(separator="\n") for div in lyrics_divs])
+        return "Lyrics not available."
+    return "Error fetching lyrics page."
 def search(request):
     getter=request.GET.get("getter")
     song=Song.objects.all()
@@ -103,9 +139,14 @@ def songs(request):
     })
 
 
+# def songtemplate(request, id):
+#     song = Song.objects.filter(song_id=id).first()
+#     return render(request, 'music_beat/songtemplate.html',{'song': song})
 def songtemplate(request, id):
     song = Song.objects.filter(song_id=id).first()
-    return render(request, 'music_beat/songtemplate.html',{'song': song})
+    lyrics = get_lyrics(song.name, song.singer)
+
+    return render(request, 'music_beat/songtemplate.html', {'song': song, 'lyrics': lyrics})
 
 def login(request):
     if request.method == "POST":
