@@ -1,42 +1,120 @@
-{% extends 'music_beat/basic.html '%}
-{% block title %}All Songs{% endblock %}
+{% extends 'music_beat/basic.html'%}
+{% block title %}Now Playing - {{ song.name }}{% endblock %}
 
 {% block body %}
 
-{% if message%}
+<!-- SweetAlert for Watch Later Confirmation -->
+{% if message %}
 <script>
   Swal.fire({
-    position: "top-end",
+    title: '{{ message }}',
+    text: "Do you want to go to your Watch Later list?",
     icon: "success",
-    title: '{{messsage}}',
-    showConfirmButton: false,
-    timer: 1500
-    })
+    showCancelButton: true,
+    confirmButtonText: "Yes, take me there",
+    cancelButtonText: "No, stay here",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      window.location.href = "/music_beat/watchlater";
+    }
+  });
 </script>
 {% endif %}
-<div class="container">
-  <div class="row">
-    <div class="col-md-6" style="padding-top: 4%;">
-        <img src="/media/{{song.image}}" alt="" height="300px" width="400px">
+
+<div class="container d-flex align-items-center justify-content-center min-vh-100">
+  <div class="row w-100">
+    <!-- Left: Album Image -->
+    <div class="col-md-6 d-flex justify-content-center">
+      <img src="/media/{{ song.image }}" class="img-fluid rounded shadow-lg" alt="{{ song.name }}" style="max-width: 350px;">
     </div>
-    <div class="col-md-6">
-        <h1 style="font-family: cursive; color: rgb(15, 10, 103); font-size: 40px; padding-top: 6%; font-weight: 440;">Title:{{song.name}}</h1>
-        <h5 style="font-family: cursive; color: rgb(15, 10, 103); padding-top: 2%; font-weight: 440;">categories:{{song.tags}} </h5>
-        <h5 style="font-family: cursive; color: rgb(15, 10, 103); padding-top: 2%; font-weight: 440;">Singer:{{song.singer}}</h5>
-        <audio controls style="padding-top: 2%;">
-            <source src="/media/{{song.song}}" type="audio/mp3">
+
+    <!-- Right: Song Details & Controls -->
+    <div class="col-md-6 text-center text-md-start">
+      <h1 class="song-title">{{ song.name }}</h1>
+      <h5 class="song-meta">🎤 {{ song.singer }} | 🎼 {{ song.tags }}</h5>
+
+      <!-- Audio Player -->
+      <div class="player-controls mt-3">
+        <audio controls class="w-100">
+          <source src="/media/{{ song.song }}" type="audio/mp3">
         </audio>
-        <div class="row">
-          <form action="/music_beat/watchlater" method="POST">{% csrf_token %}
-          <input type="hidden" name="video_id" value="{{song.song_id}}">
-          <button type="submit" class="btn btn-outline-success" style="background-color: black; color: rgb(234, 255, 0);">watchlater</button>
-          </form>
-          <a href="/media/{{song.song}}"><button class="btn btn-outline-success" style="background-color: black; color: rgb(234, 255, 0);">Download</button></a>
-        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="action-buttons d-flex justify-content-center justify-content-md-start gap-3 mt-4">
+        <form action="/music_beat/watchlater" method="POST">
+          {% csrf_token %}
+          <input type="hidden" name="video_id" value="{{ song.song_id }}">
+          <button type="submit" class="btn watch-later-btn">➕ Watch Later</button>
+        </form>
+
+        <a href="/media/{{ song.song }}" download>
+          <button class="btn download-btn">⬇ Download</button>
+        </a>
+      </div>
     </div>
   </div>
 </div>
-</body>
-{% endblock %}
-{% block js%}
+
+
+<!-- Custom Styles -->
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+  body {
+    font-family: "Poppins", sans-serif;
+    background: #181818;
+    color: white;
+    margin: 0;
+  }
+  
+  .song-title {
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: #ff8e53;
+  }
+  
+  .song-meta {
+    font-size: 1.2rem;
+    color: #bbb;
+    margin-bottom: 15px;
+  }
+  
+  .watch-later-btn {
+    background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+    color: white;
+    border-radius: 30px;
+    padding: 12px 20px;
+    font-weight: 600;
+  }
+  
+  .watch-later-btn:hover {
+    background: linear-gradient(135deg, #ff8e53, #ff6b6b);
+    transform: scale(1.05);
+  }
+  
+  .download-btn {
+    background: linear-gradient(135deg, #6bffb3, #53ff9a);
+    color: black;
+    border-radius: 30px;
+    padding: 12px 20px;
+    font-weight: 600;
+  }
+  
+  .download-btn:hover {
+    background: linear-gradient(135deg, #53ff9a, #6bffb3);
+    transform: scale(1.05);
+  }
+  
+  @media (max-width: 768px) {
+    .text-md-start {
+      text-align: center !important;
+    }
+    .justify-content-md-start {
+      justify-content: center !important;
+    }
+  }
+  
+</style>
+
 {% endblock %}

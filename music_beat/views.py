@@ -65,11 +65,43 @@ def logout_user(request):
 
 def index(request):
     song = Song.objects.all()
-    return render(request,'index.html',{'song': song})
+    return render(request,'music_beat/index.html',{'song': song})
 
 def songs(request):
-    song = Song.objects.all()
-    return render(request, 'music_beat/songs.html',{'song': song})
+    song_list = Song.objects.all()
+
+    # Get filter, search, and sort parameters from request
+    search_query = request.GET.get('search', '')
+    tag_filter = request.GET.get('tag', '')
+    sort_by = request.GET.get('sort', '')
+
+    # Filtering by tag
+    if tag_filter:
+        song_list = song_list.filter(tags__icontains=tag_filter)
+
+    # Searching by song name
+    if search_query:
+        song_list = song_list.filter(name__icontains=search_query)
+
+    # Sorting logic
+    if sort_by == 'name':
+        song_list = song_list.order_by('name')
+    elif sort_by == 'singer':
+        song_list = song_list.order_by('singer')
+    elif sort_by == 'tag':
+        song_list = song_list.order_by('tags')
+
+    # Get unique tags for filtering dropdown
+    all_tags = set(Song.objects.values_list('tags', flat=True))
+
+    return render(request, 'music_beat/songs.html', {
+        'song': song_list,
+        'all_tags': all_tags,
+        'search_query': search_query,
+        'tag_filter': tag_filter,
+        'sort_by': sort_by,
+    })
+
 
 def songtemplate(request, id):
     song = Song.objects.filter(song_id=id).first()

@@ -56,7 +56,7 @@ ROOT_URLCONF = 'music.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['music_beat/templates/music_beat'],
+        'DIRS': [os.path.join(BASE_DIR, 'music_beat/templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
