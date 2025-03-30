@@ -1,30 +1,77 @@
-{% extends 'music_beat/basic.html'%}
-{% block title %}MusicBeats{% endblock %}
+{% extends 'music_beat/basic.html' %}
+{% block title %}MusicBeats - Watch Later{% endblock %}
 
 {% block body %}
 {% load static %}
-<body style="background-color: rgb(181, 227, 165);">
-    
-<h1 style="color: rgb(36, 103, 143); text-align: center;" >Watch later</h1>
 
-<div class="container" style="padding-top: 3%;">
-{% for i in song%}
-<div class="card mb-3" style="max-width: 940px; background-color: black;">
-  <div class="row g-0">
-    <div class="col-md-4">
-      <img src="/media/{{i.image}}" class="img-fluid rounded-start" alt="...">
-    </div>
-    <div class="col-md-8">
-      <div class="card-body">
-        <h5 class="card-title" style="color: aquamarine;">Name:{{i.name}}</h5>
-        <p class="card-text" style="color: azure;">Tags:{{i.tags}}</p>
-        <a href="/music_beat/songs/{{i.song_id}}"><button class="btn btn-outline-danger" style="color: beige;">Listen Song</button></a>
+<body style="background-color: #121212; color: white; font-family: 'Poppins', sans-serif;">
+  <h1 class="text-center mt-4" style="color: #1DB954; font-weight: 700; text-shadow: 2px 2px 10px #1DB954;">
+    🎶 Watch Later
+  </h1>
+
+  <div class="container mt-4">
+    <div class="row justify-content-center">
+      {% for i in song %}
+      <div class="col-md-8">
+        <div class="card mb-4 p-2 shadow-lg border-0" 
+             style="background: #181818; border-radius: 15px; transition: 0.3s;">
+          <div class="row g-0 align-items-center">
+            <!-- Album Cover -->
+            <div class="col-md-4">
+              <img src="/media/{{ i.image }}" class="img-fluid rounded-start"
+                   alt="{{ i.name }}" style="border-radius: 15px 0 0 15px; transition: 0.3s;">
+            </div>
+            
+            <!-- Song Details -->
+            <div class="col-md-8">
+              <div class="card-body">
+                <h5 class="card-title" 
+                    style="color: #1DB954; font-size: 1.5rem; font-weight: 600;">
+                  🎵 {{ i.name }}
+                </h5>
+                <p class="card-text text-light">🎼 Tags: <span style="color: #bbb;">{{ i.tags }}</span></p>
+                
+                <!-- Listen Button -->
+                <a href="/music_beat/songs/{{ i.song_id }}" 
+                   class="btn play-btn">
+                  🎧 Listen Now
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
+      {% endfor %}
     </div>
   </div>
-</div>
-{% endfor %}
-</div>
-</div>
+
+  <!-- Custom Styles -->
+  <style>
+    .card:hover {
+      transform: scale(1.03);
+      box-shadow: 0px 5px 20px rgba(29, 185, 84, 0.4);
+    }
+
+    .play-btn {
+      background: linear-gradient(135deg, #1DB954, #198754);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 50px;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+
+    .play-btn:hover {
+      background: linear-gradient(135deg, #198754, #1DB954);
+      transform: scale(1.05);
+    }
+
+    img:hover {
+      transform: scale(1.02);
+      box-shadow: 0px 4px 15px rgba(255, 255, 255, 0.1);
+    }
+  </style>
+
 </body>
+
 {% endblock %}

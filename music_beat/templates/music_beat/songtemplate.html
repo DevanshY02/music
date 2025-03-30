@@ -39,6 +39,29 @@
           <source src="/media/{{ song.song }}" type="audio/mp3">
         </audio>
       </div>
+      <!-- Lyrics Button -->
+      <div class="text-center mt-4">
+        <button class="btn lyrics-btn" onclick="toggleLyrics()">📜 Show Lyrics</button>
+      </div>
+
+      <!-- Lyrics Container -->
+      <div id="lyrics-container" class="lyrics-box" style="display: none;">
+        <h3>Lyrics</h3>
+        <pre id="lyrics">{{ lyrics }}</pre>
+      </div>
+
+      <script>
+        function toggleLyrics() {
+            var lyricsDiv = document.getElementById("lyrics-container");
+            if (lyricsDiv.style.display === "none") {
+                lyricsDiv.style.display = "block";
+            } else {
+                lyricsDiv.style.display = "none";
+            }
+        }
+      </script>
+
+
 
       <!-- Action Buttons -->
       <div class="action-buttons d-flex justify-content-center justify-content-md-start gap-3 mt-4">
@@ -114,7 +137,37 @@
       justify-content: center !important;
     }
   }
-  
+  .lyrics-btn {
+        background: linear-gradient(135deg, #6b6bff, #5353ff);
+        color: white;
+        border-radius: 30px;
+        padding: 12px 20px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .lyrics-btn:hover {
+        background: linear-gradient(135deg, #5353ff, #6b6bff);
+        transform: scale(1.05);
+    }
+
+    .lyrics-box {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 20px;
+        margin-top: 20px;
+        border-radius: 10px;
+        color: white;
+        text-align: center;
+        max-height: 300px;
+        overflow-y: auto;
+    }
+
+    pre {
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        font-size: 1rem;
+        color: #fff;
+    }
 </style>
 
 {% endblock %}
