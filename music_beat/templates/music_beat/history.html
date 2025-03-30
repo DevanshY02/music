@@ -1,0 +1,30 @@
+{% extends 'music_beat/basic.html'%}
+{% block title %}MusicBeats{% endblock %}
+
+{% block body %}
+{% load static %}
+<body style="background-color: rgb(181, 227, 165);">
+    
+<h1 style="color: rgb(36, 103, 143); text-align: center;" >History</h1>
+
+<div class="container" style="padding-top: 3%;">
+{% for i in history reversed %}
+<div class="card mb-3" style="max-width: 940px; background-color: black;">
+  <div class="row g-0">
+    <div class="col-md-4">
+      <img src="/media/{{i.image}}" class="img-fluid rounded-start" alt="...">
+    </div>
+    <div class="col-md-8">
+      <div class="card-body">
+        <h5 class="card-title" style="color: aquamarine;">Name:{{i.name}}</h5>
+        <p class="card-text" style="color: azure;">Tags:{{i.tags}}</p>
+        <a href="/music_beat/songs/{{i.song_id}}"><button class="btn btn-outline-danger" style="color: beige;">Listen Song</button></a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endfor %}
+</div>
+</div>
+</body>
+{% endblock %}

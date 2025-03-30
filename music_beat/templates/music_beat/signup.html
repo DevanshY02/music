@@ -1,0 +1,30 @@
+{% extends 'music_beat/basic.html'%}
+{% block title %}SignUp{% endblock %}
+
+{% block body %}
+<body style="background-color: antiquewhite;">
+ <div class="container my-4" >
+    <form method="POST" action="/music_beat/signup">{% csrf_token %}
+        <div class="form-group">
+            <label for="inputEmail4" class="form-label">Email</label>
+            <input type="email" class="form-control" id="inputEmail4" name="email">
+        </div>
+        <div class="form-group">
+            <label for="ExampleFormControlInput1" >UserName</label>
+            <input type="text" class="form-control" id="ExampleFormControlInput1" name="username">
+        </div>
+        <div class="form-group">
+            <label for="ExampleFormControlInput1" >Name</label>
+            <input type="text" class="form-control" id="ExampleFormControlInput1" name="firstname">
+        </div>
+        <div class="form-group">
+            <label for="ExampleFormControlInput1" >Password</label>
+            <input type="password" class="form-control" id="ExampleFormControlInput1" name="pass1">
+        </div>
+        <div style="padding-top: 2%;">
+         <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+    </form>
+ </div>
+</body>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends 'music_beat/basic.html '%}
+{% block title %}All Songs{% endblock %}
+
+{% block body %}
+
+{% if message%}
+<script>
+  Swal.fire({
+    position: "top-end",
+    icon: "success",
+    title: '{{messsage}}',
+    showConfirmButton: false,
+    timer: 1500
+    })
+</script>
+{% endif %}
+<div class="container">
+  <div class="row">
+    <div class="col-md-6" style="padding-top: 4%;">
+        <img src="/media/{{song.image}}" alt="" height="300px" width="400px">
+    </div>
+    <div class="col-md-6">
+        <h1 style="font-family: cursive; color: rgb(15, 10, 103); font-size: 40px; padding-top: 6%; font-weight: 440;">Title:{{song.name}}</h1>
+        <h5 style="font-family: cursive; color: rgb(15, 10, 103); padding-top: 2%; font-weight: 440;">categories:{{song.tags}} </h5>
+        <h5 style="font-family: cursive; color: rgb(15, 10, 103); padding-top: 2%; font-weight: 440;">Singer:{{song.singer}}</h5>
+        <audio controls style="padding-top: 2%;">
+            <source src="/media/{{song.song}}" type="audio/mp3">
+        </audio>
+        <div class="row">
+          <form action="/music_beat/watchlater" method="POST">{% csrf_token %}
+          <input type="hidden" name="video_id" value="{{song.song_id}}">
+          <button type="submit" class="btn btn-outline-success" style="background-color: black; color: rgb(234, 255, 0);">watchlater</button>
+          </form>
+          <a href="/media/{{song.song}}"><button class="btn btn-outline-success" style="background-color: black; color: rgb(234, 255, 0);">Download</button></a>
+        </div>
+    </div>
+  </div>
+</div>
+</body>
+{% endblock %}
+{% block js%}
+{% endblock %}

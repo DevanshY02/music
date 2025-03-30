@@ -1,0 +1,20 @@
+{% extends 'music_beat/basic.html'%}
+{% block title %}Login{% endblock %}
+
+{% block body %}
+<div class="container my-4">
+    <form action="/music_beat/login" method="POST">{% csrf_token %}
+        <div class="form-group">
+            <label for="inputEmail4" class="form-label">username</label>
+            <input type="text" class="form-control" id="inputEmail4" name="username">
+        </div>
+        <div class="form-group">
+            <label for="ExampleInputPassword1" >Password</label>
+            <input type="password" class="form-control" id="ExampleInputPassword1" name="password">
+        </div>
+         <div class="col-12">
+             <button type="submit" class="btn btn-primary">Sign in</button>
+         </div>
+    </form>
+</div>
+{% endblock %}
