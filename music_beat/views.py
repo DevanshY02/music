@@ -66,34 +66,36 @@ def history(request):
 
     return render(request, 'music_beat/history.html',{'history': song})
 
+from django.contrib.auth.decorators import login_required
+
+@login_required(login_url="/music_beat/login")
 def watchlater(request):
     if request.method == "POST":
-        user=request.user
-        video_id=request.POST['video_id']
+        user = request.user
+        video_id = request.POST['video_id']
 
-        watch= Watchlater.objects.filter(user=user)
+        watch = Watchlater.objects.filter(user=user)
 
         for i in watch:
-            if video_id==i.video_id:
-                message="Your song Is Already Added"
+            if video_id == i.video_id:
+                message = "Your song is already added"
                 break
         else:
-           watchlater=Watchlater(user=user, video_id=video_id)
-           watchlater.save()
-           message="your song added"
+            watchlater = Watchlater(user=user, video_id=video_id)
+            watchlater.save()
+            message = "Your song has been added"
 
-        song=Song.objects.filter(song_id=video_id).first()
-        return render(request, f"music_beat/songtemplate.html", {'song': song, "message": message})
+        song = Song.objects.filter(song_id=video_id).first()
+        return render(request, "music_beat/songtemplate.html", {'song': song, "message": message})
     
-    wl=Watchlater.objects.filter(user=request.user)
-    l1=[]
-    for i in wl:
-        l1.append(i.video_id)
+    wl = Watchlater.objects.filter(user=request.user)
+    l1 = [i.video_id for i in wl]
     
-    preserved= Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(l1)])
+    preserved = Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(l1)])
     song = Song.objects.filter(song_id__in=l1).order_by(preserved)
 
-    return render(request, 'music_beat/watchlater.html', {'song': song})
+    return render(request, "music_beat/watchlater.html", {'song': song})
+
 
 def logout_user(request):
     logout(request)
@@ -104,7 +106,7 @@ def index(request):
     return render(request,'music_beat/index.html',{'song': song})
 
 def songs(request):
-    song_list = Song.objects.all()
+    song_list = Song.objects.all().order_by('name')  # Default sorting by name
 
     # Get filter, search, and sort parameters from request
     search_query = request.GET.get('search', '')

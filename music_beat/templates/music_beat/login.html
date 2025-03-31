@@ -1,20 +1,65 @@
-{% extends 'music_beat/basic.html'%}
+{% extends 'music_beat/basic.html' %}
 {% block title %}Login{% endblock %}
 
 {% block body %}
-<div class="container my-4">
-    <form action="/music_beat/login" method="POST">{% csrf_token %}
-        <div class="form-group">
-            <label for="inputEmail4" class="form-label">username</label>
-            <input type="text" class="form-control" id="inputEmail4" name="username">
+<body style="background-color: #121212; color: #ffffff;">
+    <div class="container d-flex justify-content-center align-items-center vh-100">
+        <div class="card p-4 shadow-lg border-0"
+             style="max-width: 400px; width: 100%; border-radius: 15px;
+                    background: rgba(255, 255, 255, 0.1);
+                    backdrop-filter: blur(10px); box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);">
+            <h2 class="text-center text-light fw-bold">Welcome Back</h2>
+            <form method="POST" action="/music_beat/login">
+                {% csrf_token %}
+
+                <div class="mb-3">
+                    <label for="username" class="form-label text-light fw-semibold">Username</label>
+                    <input type="text" class="form-control bg-dark text-white border-0" 
+                           id="username" name="username" placeholder="Enter your username" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="password" class="form-label text-light fw-semibold">Password</label>
+                    <input type="password" class="form-control bg-dark text-white border-0" 
+                           id="password" name="password" placeholder="Enter your password" required>
+                </div>
+
+                <button type="submit" class="btn w-100 fw-bold py-2"
+                        style="background: linear-gradient(45deg, #1db954, #1ed760); color: #fff; 
+                               border-radius: 25px; transition: 0.3s; box-shadow: 0px 0px 8px rgba(29, 185, 84, 0.7);">
+                    Sign In
+                </button>
+
+                <p class="text-center mt-3 text-light">
+                    Don't have an account? 
+                    <a href="/music_beat/signup" class="text-info fw-semibold">Sign up here</a>
+                </p>
+            </form>
         </div>
-        <div class="form-group">
-            <label for="ExampleInputPassword1" >Password</label>
-            <input type="password" class="form-control" id="ExampleInputPassword1" name="password">
-        </div>
-         <div class="col-12">
-             <button type="submit" class="btn btn-primary">Sign in</button>
-         </div>
-    </form>
-</div>
+    </div>
+
+    <!-- Bootstrap 5 CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+
+    <!-- Custom Styling -->
+    <style>
+        .form-control {
+            background-color: #222;
+            color: #fff;
+            border: 1px solid #444;
+            transition: 0.3s;
+        }
+
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .form-control:focus {
+            background-color: #333;
+            color: #fff;
+            border: 1px solid #1db954;
+            box-shadow: 0px 0px 10px rgba(29, 185, 84, 0.7);
+        }
+    </style>
+</body>
 {% endblock %}

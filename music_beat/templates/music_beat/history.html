@@ -1,30 +1,99 @@
-{% extends 'music_beat/basic.html'%}
-{% block title %}MusicBeats{% endblock %}
+{% extends 'music_beat/basic.html' %}
+{% block title %}History{% endblock %}
 
 {% block body %}
-{% load static %}
-<body style="background-color: rgb(181, 227, 165);">
-    
-<h1 style="color: rgb(36, 103, 143); text-align: center;" >History</h1>
+<div class="container mt-4">
+    <h2 class="page-title">📜 Listening History</h2>
 
-<div class="container" style="padding-top: 3%;">
-{% for i in history reversed %}
-<div class="card mb-3" style="max-width: 940px; background-color: black;">
-  <div class="row g-0">
-    <div class="col-md-4">
-      <img src="/media/{{i.image}}" class="img-fluid rounded-start" alt="...">
+    <div class="history-list">
+        {% for i in history reversed %}
+        <div class="card song-card">
+            <div class="row g-0">
+                <div class="col-md-4">
+                    <img src="/media/{{ i.image }}" class="img-fluid song-img" alt="{{ i.name }}">
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <h5 class="song-title">{{ i.name }}</h5>
+                        <p class="song-info">🎼 {{ i.tags }}</p>
+                        <a href="/music_beat/songs/{{ i.song_id }}" class="btn listen-btn">▶ Listen Again</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p class="no-results">No history available.</p>
+        {% endfor %}
     </div>
-    <div class="col-md-8">
-      <div class="card-body">
-        <h5 class="card-title" style="color: aquamarine;">Name:{{i.name}}</h5>
-        <p class="card-text" style="color: azure;">Tags:{{i.tags}}</p>
-        <a href="/music_beat/songs/{{i.song_id}}"><button class="btn btn-outline-danger" style="color: beige;">Listen Song</button></a>
-      </div>
-    </div>
-  </div>
 </div>
-{% endfor %}
-</div>
-</div>
-</body>
+
+<style>
+    .history-list {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .song-card {
+        max-width: 750px;
+        width: 100%;
+        background: #222;
+        color: white;
+        border-radius: 12px;
+        overflow: hidden;
+        margin-bottom: 15px;
+        box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.15);
+        transition: transform 0.3s ease-in-out;
+        border: none;
+    }
+
+    .song-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .song-img {
+        height: 180px;
+        width: 100%;
+        object-fit: cover;
+        border-radius: 12px 12px 0 0;
+    }
+
+    .song-title {
+        font-size: 1.4rem;
+        font-weight: 600;
+        margin-bottom: 5px;
+        color: #ff8e53;
+    }
+
+    .song-info {
+        font-size: 1rem;
+        color: #bbb;
+    }
+
+    .listen-btn {
+        display: inline-block;
+        font-size: 1rem;
+        font-weight: 600;
+        padding: 10px 18px;
+        background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+        color: #332c2c;
+        border: none;
+        border-radius: 25px;
+        transition: all 0.3s ease-in-out;
+        text-decoration: none;
+    }
+
+    .listen-btn:hover {
+        background: linear-gradient(135deg, #ff8e53, #ff6b6b);
+        transform: scale(1.05);
+    }
+
+    .no-results {
+        text-align: center;
+        font-size: 1.2rem;
+        color: #bbb;
+        margin-top: 20px;
+    }
+</style>
 {% endblock %}

@@ -10,4 +10,5 @@ urlpatterns = [
     path('watchlater', views.watchlater, name='watchlater'),
     path('history', views.history, name='history'),
     path('search', views.search, name='search'),
+    
 ]
