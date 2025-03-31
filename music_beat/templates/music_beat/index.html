@@ -15,7 +15,7 @@
     <!-- Slides -->
     <div class="carousel-inner">
         <div class="carousel-item active">
-            <img src="{% static 'music_beat/m2.jpeg' %}" class="d-block w-100" alt="Music">
+            <img src="{% static 'music_beat/m1.jpeg' %}" class="d-block w-100" alt="Music">
             <div class="carousel-caption d-flex flex-column justify-content-center align-items-center">
                 <h1 class="display-4 fw-bold text-light">Music Player</h1>
                 <p class="fs-5 text-light">Welcome to the world of music</p>
@@ -87,7 +87,7 @@
                 <img src="/media/{{i.image}}" class="card-img-top" alt="{{i.name}}">
                 <div class="card-body text-center">
                     <h5 class="card-title">{{ i.name }}</h5>
-                    <p class="card-text text-muted">🎵 {{ i.tags }}</p>
+                    <p class="card-text ">🎵 {{ i.tags }}</p>
                     
                     {% if user.is_authenticated %}
                     <form action="/music_beat/history" method="POST">{% csrf_token %}
@@ -139,7 +139,7 @@
         height: auto;
         border-radius: 12px;
         overflow: hidden;
-        background: #fff;
+        background: #080808;
         box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.15);
         transition: transform 0.3s ease-in-out, box-shadow 0.3s;
         border: none;
@@ -164,14 +164,16 @@
     .card-title {
         font-size: 1.2rem;
         font-weight: 600;
-        color: #333;
+        color: #777777;
         margin-bottom: 8px;
     }
 
     .card-text {
         font-size: 0.9rem;
-        color: #666;
+        color: #888888;
         font-weight: 400;
+        overflow: hidden;
+        height: 20px;
     }
 
     .listen-btn {
