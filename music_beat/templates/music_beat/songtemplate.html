@@ -1,4 +1,4 @@
-{% extends 'music_beat/basic.html'%}
+{% extends 'music_beat/basic.html' %}
 {% block title %}Now Playing - {{ song.name }}{% endblock %}
 
 {% block body %}
@@ -35,10 +35,11 @@
 
       <!-- Audio Player -->
       <div class="player-controls mt-3">
-        <audio controls class="w-100">
+        <audio id="audio-player" controls class="w-100">
           <source src="/media/{{ song.song }}" type="audio/mp3">
         </audio>
       </div>
+
       <!-- Lyrics Button -->
       <div class="text-center mt-4">
         <button class="btn lyrics-btn" onclick="toggleLyrics()">📜 Show Lyrics</button>
@@ -59,9 +60,37 @@
                 lyricsDiv.style.display = "none";
             }
         }
+
+        // Handle progress bar functionality
+        var audioPlayer = document.getElementById('audio-player');
+
+        // Wait for the audio metadata to load before updating progress bar
+        audioPlayer.addEventListener('loadedmetadata', function() {
+          var progressBar = audioPlayer.querySelector('progress');
+          if (progressBar) {
+            progressBar.max = audioPlayer.duration; // Set the progress bar maximum value to the song duration
+            progressBar.value = audioPlayer.currentTime; // Set the initial progress value
+          }
+        });
+
+        // Update progress bar during playback
+        audioPlayer.addEventListener('timeupdate', function() {
+          var progressBar = audioPlayer.querySelector('progress');
+          if (progressBar) {
+            progressBar.value = audioPlayer.currentTime; // Update the progress bar with current time
+          }
+        });
+
+        // Seek when the user clicks on the progress bar (native controls)
+        audioPlayer.addEventListener('click', function(event) {
+          var progressBar = audioPlayer.querySelector('progress');
+          if (progressBar) {
+            var clickPosition = (event.clientX - progressBar.getBoundingClientRect().left) / progressBar.offsetWidth;
+            audioPlayer.currentTime = clickPosition * audioPlayer.duration;
+          }
+        });
+
       </script>
-
-
 
       <!-- Action Buttons -->
       <div class="action-buttons d-flex justify-content-center justify-content-md-start gap-3 mt-4">
@@ -78,7 +107,6 @@
     </div>
   </div>
 </div>
-
 
 <!-- Custom Styles -->
 <style>
@@ -137,37 +165,38 @@
       justify-content: center !important;
     }
   }
+
   .lyrics-btn {
-        background: linear-gradient(135deg, #6b6bff, #5353ff);
-        color: white;
-        border-radius: 30px;
-        padding: 12px 20px;
-        font-weight: 600;
-        cursor: pointer;
-    }
+    background: linear-gradient(135deg, #6b6bff, #5353ff);
+    color: white;
+    border-radius: 30px;
+    padding: 12px 20px;
+    font-weight: 600;
+    cursor: pointer;
+  }
 
-    .lyrics-btn:hover {
-        background: linear-gradient(135deg, #5353ff, #6b6bff);
-        transform: scale(1.05);
-    }
+  .lyrics-btn:hover {
+    background: linear-gradient(135deg, #5353ff, #6b6bff);
+    transform: scale(1.05);
+  }
 
-    .lyrics-box {
-        background: rgba(255, 255, 255, 0.1);
-        padding: 20px;
-        margin-top: 20px;
-        border-radius: 10px;
-        color: white;
-        text-align: center;
-        max-height: 300px;
-        overflow-y: auto;
-    }
+  .lyrics-box {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 10px;
+    color: white;
+    text-align: center;
+    max-height: 300px;
+    overflow-y: auto;
+  }
 
-    pre {
-        white-space: pre-wrap;
-        word-wrap: break-word;
-        font-size: 1rem;
-        color: #fff;
-    }
+  pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-size: 1rem;
+    color: #fff;
+  }
 </style>
 
 {% endblock %}
