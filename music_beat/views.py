@@ -42,11 +42,33 @@ def scrape_lyrics(url):
         return "Lyrics not available."
     return "Error fetching lyrics page."
 def search(request):
-    getter=request.GET.get("getter")
-    song=Song.objects.all()
-    qs=song.filter(name__icontains=getter)
+    search_query = request.GET.get("search", "").strip()
+    tag_filter = request.GET.get("tag", "").strip()
+    sort_by = request.GET.get("sort", "name")  # Default sorting by name
 
-    return render(request, 'music_beat/search.html',{'songs': qs})
+    # Base Queryset
+    songs = Song.objects.all()
+
+    # Apply search filter if search_query is not empty
+    if search_query:
+        songs = songs.filter(name__icontains=search_query)
+
+    # Apply tag filter if tag_filter is not empty
+    if tag_filter:
+        songs = songs.filter(tags__icontains=tag_filter)
+
+    # Sorting
+    if sort_by in ["name", "singer", "tag"]:
+        songs = songs.order_by(sort_by)
+
+    return render(request, "music_beat/search.html", {
+        "songs": songs,
+        "search_query": search_query,
+        "tag_filter": tag_filter,
+        "sort_by": sort_by,
+        "all_tags": Song.objects.values_list("tags", flat=True).distinct(),
+    })
+
 
 def history(request):
     if request.method == "POST":
