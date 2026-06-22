@@ -4,11 +4,12 @@ from django.contrib.auth.models import User
 from django.shortcuts import redirect
 from django.contrib.auth import authenticate, login as auth_login, logout
 from django.db.models import Case, When
+import os
 import requests
 from bs4 import BeautifulSoup
 
 
-GENIUS_API_KEY = "n23ewu6_IQyMVBqkGp00FdTH0D-BpKnzjNo_a7Vl2gMFFM1_2kCQpm6NZem92Ep7"
+GENIUS_API_KEY = os.environ.get("GENIUS_API_KEY", "")
 
 def get_lyrics(song_name, artist):
     if not GENIUS_API_KEY:

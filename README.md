@@ -120,13 +120,37 @@ Each song can include:
 
 ## Notes For Deployment
 
-Before deploying publicly:
+This repository includes Render-ready deployment files:
+
+- `render.yaml`
+- `build.sh`
+- `requirements-render.txt`
+
+To deploy on Render:
+
+1. Open [Render](https://render.com) and sign in.
+2. Click **New** > **Blueprint**.
+3. Connect `https://github.com/DevanshY02/music`.
+4. Apply the blueprint.
+5. Wait for the build to finish.
+
+Render will create a public `.onrender.com` URL for the app.
+
+Optional environment variables:
+
+- `GENIUS_API_KEY` - enables lyrics lookup.
+- `ALLOWED_HOSTS` - comma-separated extra hostnames.
+- `CSRF_TRUSTED_ORIGINS` - comma-separated trusted HTTPS origins.
+
+Before deploying publicly, also review:
 
 - Set `DEBUG = False`
 - Configure `ALLOWED_HOSTS`
 - Move `SECRET_KEY` and API keys into environment variables
 - Use a production database instead of local SQLite when needed
 - Configure static and media file hosting
+
+The included Render setup uses SQLite for a simple demo deployment. For a real production app, use PostgreSQL and persistent media storage.
 
 ## License
 
