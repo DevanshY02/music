@@ -127,6 +127,15 @@ Staff users can also try the iTunes import page:
 
 Search for a track, preview it, and import album art, a short preview audio URL, source link, and available lyrics. This uses iTunes preview audio, not full hosted songs.
 
+## Preview Songs And Full Songs
+
+The app supports two music flows:
+
+- **Preview songs:** Imported from iTunes. These include album art, artist info, genre, source link, lyrics when available, and a short preview audio clip.
+- **Full songs:** Uploaded manually through Django admin. These use your own MP3/audio file and can play the full track.
+
+You can also combine the workflow: use iTunes/LRCLIB to help fetch album art, genre, and lyrics, then upload your own audio file in admin for full playback.
+
 ## Notes For Deployment
 
 This repository includes Render-ready deployment files:
