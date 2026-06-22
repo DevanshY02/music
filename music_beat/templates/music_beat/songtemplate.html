@@ -25,7 +25,7 @@
   <div class="row w-100">
     <!-- Left: Album Image -->
     <div class="col-md-6 d-flex justify-content-center">
-      <img src="/media/{{ song.image }}" class="img-fluid rounded shadow-lg" alt="{{ song.name }}" style="max-width: 350px;">
+      <img src="{{ song.image_url }}" class="img-fluid rounded shadow-lg" alt="{{ song.name }}" style="max-width: 350px;">
     </div>
 
     <!-- Right: Song Details & Controls -->
@@ -36,8 +36,11 @@
       <!-- Audio Player -->
       <div class="player-controls mt-3">
         <audio id="audio-player" controls class="w-100">
-          <source src="/media/{{ song.song }}" type="audio/mp3">
+          <source src="{{ song.audio_url }}" type="audio/mp3">
         </audio>
+        {% if song.source_label %}
+        <p class="preview-note">{{ song.source_label }}</p>
+        {% endif %}
       </div>
 
       <!-- Lyrics Button -->
@@ -100,9 +103,15 @@
           <button type="submit" class="btn watch-later-btn">➕ Watch Later</button>
         </form>
 
-        <a href="/media/{{ song.song }}" download>
+        {% if song.can_download %}
+        <a href="{{ song.audio_url }}" download>
           <button class="btn download-btn">⬇ Download</button>
         </a>
+        {% elif song.external_source_url %}
+        <a href="{{ song.external_source_url }}" target="_blank" rel="noopener">
+          <button class="btn download-btn">Open Source</button>
+        </a>
+        {% endif %}
       </div>
     </div>
   </div>
@@ -155,6 +164,12 @@
   .download-btn:hover {
     background: linear-gradient(135deg, #53ff9a, #6bffb3);
     transform: scale(1.05);
+  }
+
+  .preview-note {
+    color: #bbb;
+    font-size: 0.9rem;
+    margin-top: 8px;
   }
   
   @media (max-width: 768px) {

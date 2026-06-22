@@ -1,0 +1,179 @@
+{% extends 'music_beat/basic.html' %}
+{% block title %}Import Song{% endblock %}
+
+{% block body %}
+<main class="import-page">
+  <section class="import-shell">
+    <div class="import-heading">
+      <p>iTunes Preview Import</p>
+      <h1>Import Song</h1>
+    </div>
+
+    {% if messages %}
+      <div class="message-list">
+        {% for message in messages %}
+          <div class="message {{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <form class="import-search" method="GET">
+      <input type="search" name="q" value="{{ query }}" placeholder="Search song or artist">
+      <button type="submit">Search</button>
+    </form>
+
+    <div class="import-results">
+      {% for result in results %}
+        <article class="import-card">
+          <img src="{{ result.artwork_url }}" alt="{{ result.name }}">
+          <div>
+            <h2>{{ result.name }}</h2>
+            <p>{{ result.artist }}</p>
+            <p class="muted">{{ result.album }}{% if result.genre %} | {{ result.genre }}{% endif %}</p>
+            {% if result.preview_url %}
+              <audio controls src="{{ result.preview_url }}"></audio>
+            {% else %}
+              <p class="muted">No preview available for this result.</p>
+            {% endif %}
+          </div>
+          <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="track_id" value="{{ result.track_id }}">
+            <button type="submit">Import</button>
+          </form>
+        </article>
+      {% empty %}
+        {% if query %}
+          <p class="empty-state">No iTunes results found.</p>
+        {% else %}
+          <p class="empty-state">Search for a track to import its thumbnail, preview audio, and lyrics.</p>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </section>
+</main>
+
+<style>
+  body {
+    background: #181818;
+  }
+
+  .import-page {
+    min-height: calc(100vh - 70px);
+    padding: 42px 16px;
+    color: #ffffff;
+  }
+
+  .import-shell {
+    width: min(980px, 100%);
+    margin: 0 auto;
+  }
+
+  .import-heading p {
+    margin: 0 0 6px;
+    color: #ff8e53;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  .import-heading h1 {
+    margin: 0 0 22px;
+    font-size: 36px;
+  }
+
+  .import-search {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+    margin-bottom: 22px;
+  }
+
+  .import-search input,
+  .import-search button,
+  .import-card button {
+    min-height: 44px;
+    border-radius: 8px;
+    border: 1px solid #444;
+    font: inherit;
+  }
+
+  .import-search input {
+    background: #222;
+    color: #fff;
+    padding: 0 14px;
+  }
+
+  .import-search button,
+  .import-card button {
+    background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+    color: white;
+    border: none;
+    padding: 0 18px;
+    font-weight: 700;
+  }
+
+  .import-results {
+    display: grid;
+    gap: 14px;
+  }
+
+  .import-card {
+    display: grid;
+    grid-template-columns: 112px 1fr auto;
+    gap: 16px;
+    align-items: center;
+    padding: 14px;
+    border-radius: 12px;
+    background: #222;
+  }
+
+  .import-card img {
+    width: 112px;
+    height: 112px;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+
+  .import-card h2 {
+    margin: 0 0 4px;
+    color: #ff8e53;
+    font-size: 20px;
+  }
+
+  .import-card p {
+    margin: 0 0 4px;
+  }
+
+  .import-card audio {
+    width: min(420px, 100%);
+    margin-top: 8px;
+  }
+
+  .muted,
+  .empty-state {
+    color: #bbbbbb;
+  }
+
+  .message {
+    padding: 12px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    background: #2d3748;
+  }
+
+  .message.success {
+    background: #1f5136;
+  }
+
+  .message.error {
+    background: #622727;
+  }
+
+  @media (max-width: 720px) {
+    .import-search,
+    .import-card {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+{% endblock %}

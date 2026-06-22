@@ -8,6 +8,7 @@ Music player is a Django-based music web app where users can browse songs, searc
 - Song listing with search, tag filters, and sorting
 - Song detail page with audio playback
 - Lyrics lookup for song pages
+- Staff-only song import from iTunes previews
 - User signup, login, and logout
 - Watch Later list for logged-in users
 - Listening history
@@ -117,6 +118,14 @@ Each song can include:
 - Tags
 - Cover image
 - Audio file
+
+Staff users can also try the iTunes import page:
+
+```text
+/music_beat/import-song
+```
+
+Search for a track, preview it, and import album art, a short preview audio URL, source link, and available lyrics. This uses iTunes preview audio, not full hosted songs.
 
 ## Notes For Deployment
 

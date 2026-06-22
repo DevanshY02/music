@@ -4,6 +4,7 @@ from . import views
 urlpatterns = [
     path('songs/', views.songs, name='songs'),
     path('songs/<int:id>', views.songtemplate, name='songtemplate'),
+    path('import-song', views.import_song, name='import_song'),
     path('login', views.login, name='login'),
     path('signup', views.signup, name='signup'),
     path('logout_user', views.logout_user, name='logout_user'),

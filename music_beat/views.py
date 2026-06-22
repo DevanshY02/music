@@ -3,10 +3,13 @@ from music_beat.models import Song, Watchlater, History
 from django.contrib.auth.models import User
 from django.shortcuts import redirect
 from django.contrib.auth import authenticate, login as auth_login, logout
+from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib import messages
 from django.db.models import Case, When
 import os
 import requests
 from bs4 import BeautifulSoup
+from music_beat.external_music import lookup_itunes_track, search_itunes
 
 
 GENIUS_API_KEY = os.environ.get("GENIUS_API_KEY", "")
@@ -260,9 +263,47 @@ def songs(request):
 #     return render(request, 'music_beat/songtemplate.html',{'song': song})
 def songtemplate(request, id):
     song = Song.objects.filter(song_id=id).first()
-    lyrics = get_lyrics(song.name, song.singer)
+    lyrics = song.lyrics_text or get_lyrics(song.name, song.singer)
 
     return render(request, 'music_beat/songtemplate.html', {'song': song, 'lyrics': lyrics})
+
+@staff_member_required(login_url="/admin/login/")
+def import_song(request):
+    query = request.GET.get("q", "").strip()
+    results = []
+
+    if request.method == "POST":
+        track_id = request.POST.get("track_id", "").strip()
+        track = lookup_itunes_track(track_id)
+
+        if not track:
+            messages.error(request, "Could not import that song. Try another result.")
+            return redirect("/music_beat/import-song")
+
+        lyrics = get_lrclib_lyrics(track["name"], track["artist"])
+        lyrics_text = "" if lyrics == "Lyrics not found." else lyrics
+
+        song = Song.objects.create(
+            name=track["name"],
+            singer=track["artist"],
+            tags=track["genre"] or "Imported",
+            external_image_url=track["artwork_url"],
+            external_audio_url=track["preview_url"],
+            external_source_url=track["source_url"],
+            lyrics_text=lyrics_text,
+            source_label="iTunes Preview",
+        )
+
+        messages.success(request, f"Imported {song.name}.")
+        return redirect(f"/music_beat/songs/{song.song_id}")
+
+    if query:
+        try:
+            results = search_itunes(query)
+        except requests.RequestException:
+            messages.error(request, "Could not reach iTunes right now. Try again in a moment.")
+
+    return render(request, "music_beat/import_song.html", {"query": query, "results": results})
 
 def login(request):
     if request.method == "POST":
