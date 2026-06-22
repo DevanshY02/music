@@ -136,6 +136,8 @@ To deploy on Render:
 
 Render will create a public `.onrender.com` URL for the app.
 
+The demo deployment serves committed files from `media/` so existing song thumbnails and audio can load on Render. New files uploaded from the deployed admin can disappear after a redeploy or restart unless you add persistent disk or external storage.
+
 Optional environment variables:
 
 - `GENIUS_API_KEY` - enables lyrics lookup.
@@ -148,7 +150,7 @@ Before deploying publicly, also review:
 - Configure `ALLOWED_HOSTS`
 - Move `SECRET_KEY` and API keys into environment variables
 - Use a production database instead of local SQLite when needed
-- Configure static and media file hosting
+- Configure durable media file hosting for production uploads
 
 The included Render setup uses SQLite for a simple demo deployment. For a real production app, use PostgreSQL and persistent media storage.
 
