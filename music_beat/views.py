@@ -10,16 +10,30 @@ from bs4 import BeautifulSoup
 
 
 GENIUS_API_KEY = os.environ.get("GENIUS_API_KEY", "")
+GENIUS_HEADERS = {
+    "User-Agent": (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Chrome/126.0.0.0 Safari/537.36"
+    ),
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "Accept-Language": "en-US,en;q=0.9",
+}
 
 def get_lyrics(song_name, artist):
-    if not GENIUS_API_KEY:
-        return "Genius API key is missing."
+    fallback_lyrics = get_lrclib_lyrics(song_name, artist)
 
-    headers = {"Authorization": f"Bearer {GENIUS_API_KEY}"}
+    if not GENIUS_API_KEY:
+        return fallback_lyrics
+
+    headers = {**GENIUS_HEADERS, "Authorization": f"Bearer {GENIUS_API_KEY}"}
     search_url = "https://api.genius.com/search"
     params = {"q": f"{song_name} {artist}"}
 
-    response = requests.get(search_url, headers=headers, params=params)
+    try:
+        response = requests.get(search_url, headers=headers, params=params, timeout=12)
+    except requests.RequestException:
+        return fallback_lyrics
 
     if response.status_code == 200:
         json_data = response.json()
@@ -27,21 +41,98 @@ def get_lyrics(song_name, artist):
         
         if hits:
             song_url = hits[0]["result"]["url"]
-            return scrape_lyrics(song_url)
-        return "Lyrics not found."
-    else:
-        return f"Error fetching lyrics. Status: {response.status_code}"
+            genius_lyrics = scrape_lyrics(song_url)
+
+            if is_usable_lyrics(genius_lyrics):
+                return genius_lyrics
+
+        return fallback_lyrics
+
+    return fallback_lyrics
+
+def get_lrclib_lyrics(song_name, artist):
+    artist_candidates = [
+        artist,
+        artist.split(",")[0],
+        artist.split("|")[0],
+    ]
+
+    for artist_name in artist_candidates:
+        artist_name = artist_name.strip()
+
+        if not artist_name:
+            continue
+
+        try:
+            response = requests.get(
+                "https://lrclib.net/api/search",
+                params={"track_name": song_name, "artist_name": artist_name},
+                headers={"User-Agent": "DevanshY02 music app (https://github.com/DevanshY02/music)"},
+                timeout=12,
+            )
+        except requests.RequestException:
+            continue
+
+        if response.status_code != 200:
+            continue
+
+        for result in response.json():
+            lyrics = result.get("plainLyrics") or result.get("syncedLyrics")
+
+            if lyrics:
+                return clean_lyrics(lyrics)
+
+    return "Lyrics not found."
+
+def is_usable_lyrics(lyrics):
+    if not lyrics:
+        return False
+
+    unavailable_messages = (
+        "Error fetching lyrics",
+        "Lyrics could not",
+        "Lyrics not available",
+        "Lyrics not found",
+    )
+
+    return not lyrics.startswith(unavailable_messages)
+
+def clean_lyrics(lyrics):
+    lines = []
+
+    for line in lyrics.splitlines():
+        stripped = line.strip()
+
+        if stripped:
+            lines.append(stripped)
+
+    return "\n".join(lines)
 
 def scrape_lyrics(url):
-    response = requests.get(url)
-    if response.status_code == 200:
-        soup = BeautifulSoup(response.text, "html.parser")
-        lyrics_divs = soup.find_all("div", class_="Lyrics__Container-sc-1ynbvzw-6")
+    try:
+        response = requests.get(url, headers=GENIUS_HEADERS, timeout=12)
+    except requests.RequestException:
+        return "Lyrics could not be loaded right now."
 
-        if lyrics_divs:
-            return "\n".join([div.get_text(separator="\n") for div in lyrics_divs])
-        return "Lyrics not available."
-    return "Error fetching lyrics page."
+    if response.status_code != 200:
+        return f"Error fetching lyrics page. Status: {response.status_code}"
+
+    soup = BeautifulSoup(response.text, "html.parser")
+    lyrics_divs = soup.select('div[data-lyrics-container="true"]')
+
+    if not lyrics_divs:
+        lyrics_divs = soup.select('div[class^="Lyrics__Container"], div[class*=" Lyrics__Container"]')
+
+    lines = []
+
+    for lyrics_div in lyrics_divs:
+        text = lyrics_div.get_text(separator="\n")
+        lines.extend(line.strip() for line in text.splitlines() if line.strip())
+
+    if lines:
+        return clean_lyrics("\n".join(lines))
+
+    return "Lyrics not available."
 def search(request):
     search_query = request.GET.get("search", "").strip()
     tag_filter = request.GET.get("tag", "").strip()
