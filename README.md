@@ -1,6 +1,6 @@
 # Music Player App 
 
-Music is a Django-based music web app where users can browse songs, search and filter the catalog, view song details, play uploaded audio, save songs to watch later, and track listening history.
+Music player is a Django-based music web app where users can browse songs, search and filter the catalog, view song details, play uploaded audio, save songs to watch later, and track listening history.
 
 ## Features
 
